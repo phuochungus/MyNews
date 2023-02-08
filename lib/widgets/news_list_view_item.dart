@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'models/news.dart';
+import '../models/news.dart';
 
 class NewsItem extends StatelessWidget {
   late final News news;

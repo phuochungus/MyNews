@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'models/news.dart';
+import '../models/news.dart';
 import "package:flutter/services.dart";
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
