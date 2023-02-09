@@ -1,4 +1,6 @@
-class News {
+import 'package:equatable/equatable.dart';
+
+class News extends Equatable {
   int? storyId;
   String? title;
   String? summary;
@@ -24,4 +26,7 @@ class News {
     data['image'] = image;
     return data;
   }
+
+  @override
+  List<Object?> get props => [storyId, title, summary, modifiedAt, image];
 }

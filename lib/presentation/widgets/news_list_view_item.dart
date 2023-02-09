@@ -70,6 +70,7 @@ class NewsItem extends StatelessWidget {
                   style: GoogleFonts.openSans(
                     fontSize: 14,
                     color: const Color(0xff1D1A61),
+                    fontWeight: FontWeight.w400,
                   ),
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
@@ -83,6 +84,7 @@ class NewsItem extends StatelessWidget {
                     DateFormat('MMM dd, yyyy').format(news.modifiedAt!),
                     style: GoogleFonts.openSans(
                       fontStyle: FontStyle.italic,
+                      fontWeight: FontWeight.w400,
                       color: const Color(0xff1D1A61),
                     ),
                   ),

@@ -6,6 +6,8 @@ import 'package:news_app/business_login/blocs/home_screen_bloc.dart';
 import 'package:news_app/data/models/news.dart';
 import 'package:news_app/data/repositories/news_repository.dart';
 import 'package:news_app/presentation/widgets/news_list_view.dart';
+import '../../business_login/blocs/home_screen_event.dart';
+import '../../business_login/blocs/home_screen_state.dart';
 
 class HomeScreen extends StatelessWidget {
   List<News> newsGroup = List.empty();
@@ -23,10 +25,14 @@ class HomeScreen extends StatelessWidget {
       child: BlocProvider(
         create: (context) =>
             HomeScreenBloc(RepositoryProvider.of<NewsRepository>(context))
-              ..add(LoadNews()),
+              ..add(LoadNews())
+
+        // ..add(LoadNews())
+        ,
         child: Scaffold(
           drawer: NavigationDrawer(),
           appBar: AppBar(
+            centerTitle: true,
             flexibleSpace: Container(
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -36,50 +42,55 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
             toolbarHeight: 90,
-            title: const Align(
-              alignment: Alignment.center,
-              child: Text(
-                'My News',
-                style: TextStyle(fontSize: 23),
-              ),
+            title: const Text(
+              'My News',
+              style: TextStyle(fontSize: 23),
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
           floatingActionButton: CustomFAB(_controller),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
                 child: Text(
                   'News',
                   style: GoogleFonts.openSans(
-                    color: const Color(0xff1D1A61),
-                    fontSize: 20,
-                  ),
+                      color: const Color(0xff1D1A61),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600),
                 ),
               ),
-              BlocBuilder<HomeScreenBloc, HomeScreenState>(
-                builder: (context, state) {
-                  if (state is LoadingNewsState) {
-                    return const Align(
-                      child: Text('Loading'),
-                      alignment: Alignment.center,
-                    );
-                  }
+              Expanded(
+                child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
+                  builder: (context, state) {
+                    if (state is LoadingNewsState ||
+                        state is HomeScreenInitial) {
+                      return const Align(
+                        alignment: Alignment.center,
+                        child: CircularProgressIndicator(),
+                      );
+                    }
 
-                  if (state is LoadedNewsState) {
-                    return Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 0),
+                    if (state is LoadedNewsState) {
+                      return Padding(
+                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
                         child: NewsListView(_controller, state.payload),
-                      ),
-                    );
-                  }
-                  print(state);
-                  return Text('No State');
-                },
-              )
+                      );
+                    }
+
+                    if (state is LoadedFailState) {
+                      return const Align(
+                          alignment: Alignment.center,
+                          child:
+                              Text('The is an error when loading the news!'));
+                    }
+                    return Text('No State');
+                  },
+                ),
+              ),
             ],
           ),
         ),

@@ -19,7 +19,6 @@ class NewsRepository {
       }
       return newsGroup;
     } on DioError catch (e) {
-      print(e.message);
       rethrow;
     }
   }
