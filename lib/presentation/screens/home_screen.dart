@@ -11,9 +11,9 @@ import '../../business_login/blocs/home_screen_state.dart';
 
 class HomeScreen extends StatelessWidget {
   List<News> newsGroup = List.empty();
-  final ScrollController _controller = ScrollController();
 
-  SnackBar snackBar = const SnackBar(content: Text('data not load'));
+  final _scrollController = ScrollController();
+
   @override
   Widget build(BuildContext context) {
     SystemChrome.setEnabledSystemUIMode(
@@ -25,10 +25,7 @@ class HomeScreen extends StatelessWidget {
       child: BlocProvider(
         create: (context) =>
             HomeScreenBloc(RepositoryProvider.of<NewsRepository>(context))
-              ..add(LoadNews())
-
-        // ..add(LoadNews())
-        ,
+              ..add(FetchNews()),
         child: Scaffold(
           drawer: NavigationDrawer(),
           appBar: AppBar(
@@ -48,46 +45,46 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
           floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-          floatingActionButton: CustomFAB(_controller),
+          floatingActionButton: CustomFAB(_scrollController),
           body: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.max,
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
-                child: Text(
-                  'News',
-                  style: GoogleFonts.openSans(
-                      color: const Color(0xff1D1A61),
-                      fontSize: 18,
-                      fontWeight: FontWeight.w600),
+                child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
+                  builder: (context, state) {
+                    return Text(
+                      'News ${state.newsGroup.length}',
+                      style: GoogleFonts.openSans(
+                          color: const Color(0xff1D1A61),
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600),
+                    );
+                  },
                 ),
               ),
               Expanded(
                 child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
                   builder: (context, state) {
-                    if (state is LoadingNewsState ||
-                        state is HomeScreenInitial) {
-                      return const Align(
-                        alignment: Alignment.center,
-                        child: CircularProgressIndicator(),
-                      );
-                    }
-
-                    if (state is LoadedNewsState) {
-                      return Padding(
-                        padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-                        child: NewsListView(_controller, state.payload),
-                      );
-                    }
-
-                    if (state is LoadedFailState) {
-                      return const Align(
+                    switch (state.status) {
+                      case NewsStatus.initial:
+                        return const Align(
                           alignment: Alignment.center,
-                          child:
-                              Text('The is an error when loading the news!'));
+                          child: CircularProgressIndicator(),
+                        );
+                      case NewsStatus.success:
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
+                          child: NewsListView(_scrollController,
+                              state.newsGroup, state.hasReachMax),
+                        );
+                      case NewsStatus.failure:
+                        return const Align(
+                            alignment: Alignment.center,
+                            child:
+                                Text('The is an error when loading the news!'));
                     }
-                    return Text('No State');
                   },
                 ),
               ),
@@ -101,7 +98,7 @@ class HomeScreen extends StatelessWidget {
 
 class CustomFAB extends StatelessWidget {
   final ScrollController _scrollController;
-  const CustomFAB(this._scrollController);
+  CustomFAB(this._scrollController);
 
   void _scrollUp() {
     _scrollController.animateTo(_scrollController.position.minScrollExtent,
@@ -115,20 +112,18 @@ class CustomFAB extends StatelessWidget {
       direction: Axis.vertical,
       children: [
         Container(
-          margin: EdgeInsets.all(5),
+          margin: const EdgeInsets.all(5),
           child: FloatingActionButton(
               onPressed: () {
-                print('pressed');
-                BlocProvider.of<HomeScreenBloc>(context).add(LoadNews());
+                BlocProvider.of<HomeScreenBloc>(context).add(FetchNews());
               },
               backgroundColor: const Color(0xb21D1A61),
-              child: Icon(Icons.replay)),
+              child: const Icon(Icons.replay)),
         ),
         Container(
-          margin: EdgeInsets.all(5),
+          margin: const EdgeInsets.all(5),
           child: FloatingActionButton(
             onPressed: () {
-              print('pressed');
               _scrollUp();
             },
             backgroundColor: const Color(0xb21D1A61),
