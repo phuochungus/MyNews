@@ -40,3 +40,14 @@ flutter:
     - assets/images/3.0x/double_arrow_up.png
     - assets/images/4.0x/double_arrow_up.png
 
+  fonts:
+    - family: openSans
+      fonts:
+      - asset: assets/fonts/OpenSans-Regular.ttf
+        weight: 400
+      - asset: assets/fonts/OpenSans-SemiBold.ttf
+        weight: 600
+      - asset: assets/fonts/OpenSans-Italic.ttf
+        weight: 400
+        style: italic
+

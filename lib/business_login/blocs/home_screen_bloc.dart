@@ -17,10 +17,8 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
 
   Future<void> _onNewsRetrieving(
       HomeScreenEvent event, Emitter<HomeScreenState> emit) async {
-    //NewsProviderSqflite.instance.clearAll();
     if (state.status != NewsStatus.initial) return;
     try {
-      print('news retrieving');
       List<News> fetchedNews = await NewsProviderSqflite.instance.getAllNews();
       totalNumberOfPage = fetchedNews.length ~/ 20;
       emit(state.copyWith(
@@ -37,21 +35,12 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       HomeScreenEvent event, Emitter<HomeScreenState> emit) async {
     if (state.hasReachMax) return;
     if (state.status == NewsStatus.success) {
-      print('news fetching');
-
       try {
         List<News> fetchedNews =
             await newsRepository.getNewsOnPage(totalNumberOfPage + 1);
         if (fetchedNews.isNotEmpty) {
           totalNumberOfPage++;
-          // fetchedNews = await NewsProviderSqflite.instance.getAllNews();
-          // print(fetchedNews.toString());
           await NewsProviderSqflite.instance.insertAll(fetchedNews);
-          // if (result == 1) {
-          //   print('insert success');
-          // } else {
-          //   print('insert fail');
-          // }
           if (numberOfFetchedNewsInJSON == -1) {
             numberOfFetchedNewsInJSON = fetchedNews.length;
           }
@@ -73,9 +62,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
           ));
         }
       } catch (e) {
-        // emit(state.copyWith(status: NewsStatus.failure));
-        //_onNewsRetrieving(event, emit);
-        rethrow;
+        emit(state.copyWith(status: NewsStatus.failure));
       }
     }
   }

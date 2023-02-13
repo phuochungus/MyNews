@@ -9,8 +9,10 @@ class NewsListView extends StatefulWidget {
   final List<News> newsGroup;
   final bool hasReachMax;
   final ScrollController _scrollController;
+  bool isError;
 
-  const NewsListView(this._scrollController, this.newsGroup, this.hasReachMax);
+  NewsListView(this._scrollController, this.newsGroup, this.hasReachMax,
+      {super.key, this.isError = false});
 
   @override
   State<StatefulWidget> createState() => NewsListViewState();
@@ -59,6 +61,9 @@ class NewsListViewState extends State<NewsListView> {
       itemCount: widget.newsGroup.length + (widget.hasReachMax ? 0 : 1),
       itemBuilder: (context, index) {
         if (widget.hasReachMax == false && index == widget.newsGroup.length) {
+          if (widget.isError) {
+            return const Text('error');
+          }
           return Container(
             margin: const EdgeInsets.only(bottom: 2),
             child: const Align(

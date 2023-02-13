@@ -11,15 +11,12 @@ class NewsProviderSqflite {
 
   static final NewsProviderSqflite instance = NewsProviderSqflite._();
 
-  factory NewsProviderSqflite() => instance;
-
-  Future<Database?> get database async {
+  Future<Database> get getDB async {
     if (_database != null) {
-      return _database;
+      return _database!;
     }
-
     _database = await _initDB();
-    return _database;
+    return _database!;
   }
 
   _initDB() async {
@@ -39,27 +36,30 @@ class NewsProviderSqflite {
   }
 
   Future<void> clearAll() async {
-    var db = await database;
-    await db!.delete(tableNews);
+    var db = await getDB;
+    await db.delete(tableNews);
   }
 
   Future<News?> getNews(int storyId) async {
     try {
-      var db = await database;
-      List<Map<String, Object?>> newsGroup = await db!
+      var db = await getDB;
+      List<Map<String, Object?>> newsGroup = await db
           .query(tableNews, where: '$storyId = ?', whereArgs: [storyId]);
       if (newsGroup.isNotEmpty) {
         return News.fromAPIMap(newsGroup.first);
+      } else {
+        return null;
       }
     } catch (e) {
       return null;
+      rethrow;
     }
   }
 
   Future<List<News>> getAllNews() async {
     try {
-      var db = await database;
-      List<Map<String, dynamic>> results = await db!.query(tableNews);
+      var db = await getDB;
+      List<Map<String, dynamic>> results = await db.query(tableNews);
       List<News> newsGroup =
           results.map((e) => News.fromInternalDbMap(e)).toList();
       return newsGroup;
@@ -70,9 +70,8 @@ class NewsProviderSqflite {
 
   Future<int> insert(News news) async {
     try {
-      var db = await database;
-
-      await db!.insert(tableNews, news.toMap());
+      var db = await getDB;
+      await db.insert(tableNews, news.toMap());
       return 1;
     } catch (e) {
       return 0;
@@ -86,16 +85,15 @@ class NewsProviderSqflite {
     try {
       return 1;
     } catch (e) {
-      print(e);
       return 0;
     }
   }
 
   Future<int> delete(News news) async {
     try {
-      var db = await database;
+      var db = await getDB;
 
-      await db!.delete(tableNews,
+      await db.delete(tableNews,
           where: '$columnStoryId = ?', whereArgs: [news.storyId]);
       return 1;
     } catch (e) {
@@ -105,9 +103,9 @@ class NewsProviderSqflite {
 
   Future<int> update(News news) async {
     try {
-      var db = await database;
+      var db = await getDB;
 
-      db!.update(tableNews, news.toMap(),
+      db.update(tableNews, news.toMap(),
           where: '$columnStoryId = ?', whereArgs: [news.storyId]);
       return 1;
     } catch (e) {

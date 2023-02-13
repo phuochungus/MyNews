@@ -8,6 +8,7 @@ import 'package:news_app/data/repositories/news_repository.dart';
 import 'package:news_app/presentation/widgets/news_list_view.dart';
 import '../../business_login/blocs/home_screen_event.dart';
 import '../../business_login/blocs/home_screen_state.dart';
+import '../../data/repositories/news_provider_sqflite.dart';
 
 class HomeScreen extends StatelessWidget {
   List<News> newsGroup = List.empty();
@@ -25,7 +26,6 @@ class HomeScreen extends StatelessWidget {
       child: BlocProvider(
         create: (context) =>
             HomeScreenBloc(RepositoryProvider.of<NewsRepository>(context))
-              // ..add(FetchNewsFromAPI()),
               ..add(RetrieveNewsFromInternalDb()),
         child: Scaffold(
           drawer: NavigationDrawer(),
@@ -73,13 +73,22 @@ class HomeScreen extends StatelessWidget {
                       case NewsStatus.success:
                         return Padding(
                           padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
-                          child: NewsListView(_scrollController,
-                              state.newsGroup, state.hasReachMax),
+                          child: NewsListView(
+                            _scrollController,
+                            state.newsGroup,
+                            state.hasReachMax,
+                            isError: false,
+                          ),
                         );
                       case NewsStatus.failure:
-                        return const Align(
-                          alignment: Alignment.center,
-                          child: Text('The is an error occurred!'),
+                        return Padding(
+                          padding: const EdgeInsets.fromLTRB(15, 15, 15, 15),
+                          child: NewsListView(
+                            _scrollController,
+                            state.newsGroup,
+                            state.hasReachMax,
+                            isError: true,
+                          ),
                         );
                     }
                   },
@@ -108,6 +117,15 @@ class CustomFAB extends StatelessWidget {
     return Wrap(
       direction: Axis.vertical,
       children: [
+        Container(
+          margin: const EdgeInsets.all(5),
+          child: FloatingActionButton(
+              onPressed: () {
+                NewsProviderSqflite.instance.clearAll();
+              },
+              backgroundColor: const Color(0xb21D1A61),
+              child: const Icon(Icons.delete_forever)),
+        ),
         Container(
           margin: const EdgeInsets.all(5),
           child: FloatingActionButton(

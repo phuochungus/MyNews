@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import '../../data/models/news.dart';
@@ -15,6 +14,7 @@ class NewsItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         children: [
           Stack(
+            clipBehavior: Clip.none,
             children: [
               Container(
                 margin: const EdgeInsets.only(right: 10),
@@ -62,20 +62,20 @@ class NewsItem extends StatelessWidget {
               children: [
                 Text(
                   news.title.toString(),
-                  style: GoogleFonts.openSans(
-                    textStyle: const TextStyle(
-                      color: Color(0xff1D1A61),
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
+                  style: const TextStyle(
+                    color: Color(0xff1D1A61),
+                    fontSize: 16,
+                    fontFamily: 'openSans',
+                    fontWeight: FontWeight.w600,
                   ),
                   maxLines: 3,
                 ),
                 Text(
                   news.summary.toString(),
-                  style: GoogleFonts.openSans(
+                  style: const TextStyle(
+                    fontFamily: 'openSans',
                     fontSize: 14,
-                    color: const Color(0xff1D1A61),
+                    color: Color(0xff1D1A61),
                     fontWeight: FontWeight.w400,
                   ),
                   maxLines: 2,
@@ -88,10 +88,11 @@ class NewsItem extends StatelessWidget {
                   alignment: Alignment.bottomRight,
                   child: Text(
                     DateFormat('MMM dd, yyyy').format(news.modifiedAt!),
-                    style: GoogleFonts.openSans(
+                    style: const TextStyle(
+                      fontFamily: 'openSans',
                       fontStyle: FontStyle.italic,
                       fontWeight: FontWeight.w400,
-                      color: const Color(0xff1D1A61),
+                      color: Color(0xff1D1A61),
                     ),
                   ),
                 )
