@@ -52,16 +52,12 @@ class HomeScreen extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(15, 15, 0, 0),
-                child: BlocBuilder<HomeScreenBloc, HomeScreenState>(
-                  builder: (context, state) {
-                    return Text(
-                      'News ${state.newsGroup.length}',
-                      style: GoogleFonts.openSans(
-                          color: const Color(0xff1D1A61),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600),
-                    );
-                  },
+                child: Text(
+                  'News',
+                  style: GoogleFonts.openSans(
+                      color: const Color(0xff1D1A61),
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600),
                 ),
               ),
               Expanded(
@@ -81,9 +77,9 @@ class HomeScreen extends StatelessWidget {
                         );
                       case NewsStatus.failure:
                         return const Align(
-                            alignment: Alignment.center,
-                            child:
-                                Text('The is an error when loading the news!'));
+                          alignment: Alignment.center,
+                          child: Text('The is an error occurred!'),
+                        );
                     }
                   },
                 ),
@@ -98,7 +94,7 @@ class HomeScreen extends StatelessWidget {
 
 class CustomFAB extends StatelessWidget {
   final ScrollController _scrollController;
-  CustomFAB(this._scrollController);
+  const CustomFAB(this._scrollController);
 
   void _scrollUp() {
     _scrollController.animateTo(_scrollController.position.minScrollExtent,
@@ -111,15 +107,6 @@ class CustomFAB extends StatelessWidget {
     return Wrap(
       direction: Axis.vertical,
       children: [
-        Container(
-          margin: const EdgeInsets.all(5),
-          child: FloatingActionButton(
-              onPressed: () {
-                BlocProvider.of<HomeScreenBloc>(context).add(FetchNews());
-              },
-              backgroundColor: const Color(0xb21D1A61),
-              child: const Icon(Icons.replay)),
-        ),
         Container(
           margin: const EdgeInsets.all(5),
           child: FloatingActionButton(

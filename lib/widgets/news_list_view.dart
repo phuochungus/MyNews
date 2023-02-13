@@ -3,10 +3,10 @@ import 'package:news_app/data/models/news.dart';
 import 'package:news_app/presentation/widgets/news_list_view_item.dart';
 
 class NewsListView extends StatelessWidget {
-  late final ScrollController _controller;
-  late final List<News> newsGroup;
+  final ScrollController _controller;
+  final List<News> newsGroup;
 
-  NewsListView(this._controller, this.newsGroup);
+  const NewsListView(this._controller, this.newsGroup);
   @override
   Widget build(BuildContext context) {
     return ListView.separated(

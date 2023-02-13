@@ -1,13 +1,12 @@
 import 'package:dio/dio.dart';
 
 class NewsAPI {
-  final String _endpoint = 'http://18.218.244.144/intern/apis/news?page=1';
-  Future<List> getAllNews() async {
+  final String _endpoint = 'http://3.91.70.32/intern/apis/news';
+  Future<List> getNewsOnPage(int page) async {
     try {
-      late final List listOfObject;
-      await Dio()
-          .get(_endpoint)
-          .then((value) => listOfObject = value.data as List);
+      var response = await Dio()
+          .get(_endpoint, queryParameters: {'page': page.toString()});
+      List listOfObject = response.data as List;
       return listOfObject;
     } catch (e) {
       rethrow;

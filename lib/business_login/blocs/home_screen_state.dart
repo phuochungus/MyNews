@@ -4,30 +4,26 @@ import '../../data/models/news.dart';
 
 enum NewsStatus { initial, success, failure }
 
-abstract class HomeScreenState extends Equatable {}
+class HomeScreenState extends Equatable {
+  const HomeScreenState({
+    this.status = NewsStatus.initial,
+    this.newsGroup = const <News>[],
+    this.hasReachMax = false,
+  });
 
-class HomeScreenInitial extends HomeScreenState {
-  @override
-  List<Object?> get props => [];
-}
+  final NewsStatus status;
+  final List<News> newsGroup;
+  final bool hasReachMax;
 
-class LoadingNewsState extends HomeScreenState {
-  @override
-  List<Object?> get props => [];
-}
-
-class LoadedNewsState extends HomeScreenState {
-  final List<News> payload;
-  LoadedNewsState({required this.payload});
-
-  @override
-  List<Object?> get props => [payload];
-}
-
-class LoadedFailState extends HomeScreenState {
-  final String errorMessage;
-  LoadedFailState({required this.errorMessage});
+  HomeScreenState copyWith(
+      {NewsStatus? status, List<News>? newsGroup, bool? hasReachMax}) {
+    return HomeScreenState(
+      status: status ?? this.status,
+      newsGroup: newsGroup ?? this.newsGroup,
+      hasReachMax: hasReachMax ?? this.hasReachMax,
+    );
+  }
 
   @override
-  List<Object?> get props => [errorMessage];
+  List<Object?> get props => [status, newsGroup, hasReachMax];
 }
