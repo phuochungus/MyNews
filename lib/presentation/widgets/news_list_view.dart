@@ -25,7 +25,7 @@ class NewsListViewState extends State<NewsListView> {
     _scrollController.addListener(() {
       if (_scrollController.position.atEdge &&
           _scrollController.position.pixels != 0) {
-        context.read<HomeScreenBloc>().add(FetchNews());
+        context.read<HomeScreenBloc>().add(FetchNewsFromAPI());
       }
     });
     super.initState();
@@ -41,7 +41,7 @@ class NewsListViewState extends State<NewsListView> {
 
   void _onScroll() {
     if (_isBottom) {
-      context.read<HomeScreenBloc>().add(FetchNews());
+      context.read<HomeScreenBloc>().add(FetchNewsFromAPI());
     }
   }
 

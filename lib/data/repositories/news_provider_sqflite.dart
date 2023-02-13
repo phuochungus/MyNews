@@ -1,14 +1,34 @@
+import 'dart:io';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/news.dart';
 
 class NewsProviderSqflite {
-  late Database _db;
+  Database? _database;
 
-  Future open(String path) async {
-    _db = await openDatabase(path, version: 1, onCreate: createDB);
+  NewsProviderSqflite._();
+
+  static final NewsProviderSqflite instance = NewsProviderSqflite._();
+
+  factory NewsProviderSqflite() => instance;
+
+  Future<Database?> get database async {
+    if (_database != null) {
+      return _database;
+    }
+
+    _database = await _initDB();
+    return _database;
   }
 
-  createDB(Database db, int version) async {
+  _initDB() async {
+    Directory documentsDir = await getApplicationDocumentsDirectory();
+    String path = join(documentsDir.path, 'app.db');
+    return await openDatabase(path, version: 1, onCreate: _createDB);
+  }
+
+  _createDB(Database db, int version) async {
     db.execute('''create table $tableNews (
       $columnStoryId interger primary key,
       $columnSummary text not null,
@@ -18,30 +38,64 @@ class NewsProviderSqflite {
     )''');
   }
 
+  Future<void> clearAll() async {
+    var db = await database;
+    await db!.delete(tableNews);
+  }
+
   Future<News?> getNews(int storyId) async {
     try {
-      List<Map<String, Object?>> newsGroup = await _db
+      var db = await database;
+      List<Map<String, Object?>> newsGroup = await db!
           .query(tableNews, where: '$storyId = ?', whereArgs: [storyId]);
-      if (newsGroup.length > 0) {
-        return News.fromJson(newsGroup.first);
+      if (newsGroup.isNotEmpty) {
+        return News.fromAPIMap(newsGroup.first);
       }
     } catch (e) {
       return null;
     }
   }
 
+  Future<List<News>> getAllNews() async {
+    try {
+      var db = await database;
+      List<Map<String, dynamic>> results = await db!.query(tableNews);
+      List<News> newsGroup =
+          results.map((e) => News.fromInternalDbMap(e)).toList();
+      return newsGroup;
+    } catch (e) {
+      return List.empty();
+    }
+  }
+
   Future<int> insert(News news) async {
     try {
-      _db.insert(tableNews, news.toMap());
+      var db = await database;
+
+      await db!.insert(tableNews, news.toMap());
       return 1;
     } catch (e) {
       return 0;
     }
   }
 
+  Future<int> insertAll(List<News> newsGroup) async {
+    for (var news in newsGroup) {
+      insert(news);
+    }
+    try {
+      return 1;
+    } catch (e) {
+      print(e);
+      return 0;
+    }
+  }
+
   Future<int> delete(News news) async {
     try {
-      await _db.delete(tableNews,
+      var db = await database;
+
+      await db!.delete(tableNews,
           where: '$columnStoryId = ?', whereArgs: [news.storyId]);
       return 1;
     } catch (e) {
@@ -51,7 +105,9 @@ class NewsProviderSqflite {
 
   Future<int> update(News news) async {
     try {
-      _db.update(tableNews, news.toMap(),
+      var db = await database;
+
+      db!.update(tableNews, news.toMap(),
           where: '$columnStoryId = ?', whereArgs: [news.storyId]);
       return 1;
     } catch (e) {

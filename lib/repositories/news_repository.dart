@@ -14,9 +14,9 @@ class NewsRepository extends NewsRepositoryImp {
   Future<List<News>> getNewsOnPage(int page) async {
     try {
       List response = await NewsAPI().getNewsOnPage(page);
-      List<News> newsGroup = response.map((e) => News.fromJson(e)).toList();
+      List<News> newsGroup = response.map((e) => News.fromAPIMap(e)).toList();
       for (var element in newsGroup) {
-        element.image = baseImageUrl + element.image.toString();
+        element.imageUrl = baseImageUrl + element.imageUrl.toString();
       }
       return newsGroup;
     } on DioError catch (e) {

@@ -25,7 +25,8 @@ class HomeScreen extends StatelessWidget {
       child: BlocProvider(
         create: (context) =>
             HomeScreenBloc(RepositoryProvider.of<NewsRepository>(context))
-              ..add(FetchNews()),
+              // ..add(FetchNewsFromAPI()),
+              ..add(RetrieveNewsFromInternalDb()),
         child: Scaffold(
           drawer: NavigationDrawer(),
           appBar: AppBar(

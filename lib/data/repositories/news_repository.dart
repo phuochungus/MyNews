@@ -12,9 +12,9 @@ class NewsRepository {
         'https://img1.hscicdn.com/image/upload/f_auto,t_ds_wide_w_640,q_50/lsci';
     try {
       List response = await NewsAPI().getNewsOnPage(page);
-      List<News> newsGroup = response.map((e) => News.fromJson(e)).toList();
+      List<News> newsGroup = response.map((e) => News.fromAPIMap(e)).toList();
       for (var element in newsGroup) {
-        element.image = baseImageUrl + element.image.toString();
+        element.imageUrl = baseImageUrl + element.imageUrl.toString();
       }
       return newsGroup;
     } on DioError catch (e) {
