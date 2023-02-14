@@ -121,7 +121,7 @@ class CustomFAB extends StatelessWidget {
           margin: const EdgeInsets.all(5),
           child: FloatingActionButton(
               onPressed: () {
-                NewsProviderSqflite.instance.clearAll();
+                SqfliteHelper.clearAll();
               },
               backgroundColor: const Color(0xb21D1A61),
               child: const Icon(Icons.delete_forever)),

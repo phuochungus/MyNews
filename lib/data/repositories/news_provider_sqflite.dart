@@ -4,14 +4,10 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sqflite/sqflite.dart';
 import '../models/news.dart';
 
-class NewsProviderSqflite {
-  Database? _database;
+class SqfliteHelper {
+  static Database? _database;
 
-  NewsProviderSqflite._();
-
-  static final NewsProviderSqflite instance = NewsProviderSqflite._();
-
-  Future<Database> get getDB async {
+  static Future<Database> get getDB async {
     if (_database != null) {
       return _database!;
     }
@@ -19,13 +15,11 @@ class NewsProviderSqflite {
     return _database!;
   }
 
-  _initDB() async {
-    Directory documentsDir = await getApplicationDocumentsDirectory();
-    String path = join(documentsDir.path, 'app.db');
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+  static _initDB() async {
+    return await openDatabase('news.db', version: 1, onCreate: _createDB);
   }
 
-  _createDB(Database db, int version) async {
+  static _createDB(Database db, int version) async {
     db.execute('''create table $tableNews (
       $columnStoryId interger primary key,
       $columnSummary text not null,
@@ -35,12 +29,12 @@ class NewsProviderSqflite {
     )''');
   }
 
-  Future<void> clearAll() async {
+  static Future<void> clearAll() async {
     var db = await getDB;
     await db.delete(tableNews);
   }
 
-  Future<News?> getNews(int storyId) async {
+  static Future<News?> getNews(int storyId) async {
     try {
       var db = await getDB;
       List<Map<String, Object?>> newsGroup = await db
@@ -52,11 +46,10 @@ class NewsProviderSqflite {
       }
     } catch (e) {
       return null;
-      rethrow;
     }
   }
 
-  Future<List<News>> getAllNews() async {
+  static Future<List<News>> getAllNews() async {
     try {
       var db = await getDB;
       List<Map<String, dynamic>> results = await db.query(tableNews);
@@ -68,7 +61,7 @@ class NewsProviderSqflite {
     }
   }
 
-  Future<int> insert(News news) async {
+  static Future<int> insert(News news) async {
     try {
       var db = await getDB;
       await db.insert(tableNews, news.toMap());
@@ -78,7 +71,7 @@ class NewsProviderSqflite {
     }
   }
 
-  Future<int> insertAll(List<News> newsGroup) async {
+  static Future<int> insertAll(List<News> newsGroup) async {
     for (var news in newsGroup) {
       insert(news);
     }
@@ -89,7 +82,7 @@ class NewsProviderSqflite {
     }
   }
 
-  Future<int> delete(News news) async {
+  static Future<int> delete(News news) async {
     try {
       var db = await getDB;
 
@@ -101,7 +94,7 @@ class NewsProviderSqflite {
     }
   }
 
-  Future<int> update(News news) async {
+  static Future<int> update(News news) async {
     try {
       var db = await getDB;
 

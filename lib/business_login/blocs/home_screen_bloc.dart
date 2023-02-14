@@ -19,7 +19,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
       HomeScreenEvent event, Emitter<HomeScreenState> emit) async {
     if (state.status != NewsStatus.initial) return;
     try {
-      List<News> fetchedNews = await NewsProviderSqflite.instance.getAllNews();
+      List<News> fetchedNews = await SqfliteHelper.getAllNews();
       totalNumberOfPage = fetchedNews.length ~/ 20;
       emit(state.copyWith(
           status: NewsStatus.success,
@@ -40,7 +40,7 @@ class HomeScreenBloc extends Bloc<HomeScreenEvent, HomeScreenState> {
             await newsRepository.getNewsOnPage(totalNumberOfPage + 1);
         if (fetchedNews.isNotEmpty) {
           totalNumberOfPage++;
-          await NewsProviderSqflite.instance.insertAll(fetchedNews);
+          await SqfliteHelper.insertAll(fetchedNews);
           if (numberOfFetchedNewsInJSON == -1) {
             numberOfFetchedNewsInJSON = fetchedNews.length;
           }
