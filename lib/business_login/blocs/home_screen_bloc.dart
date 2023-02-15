@@ -1,8 +1,8 @@
 import 'package:bloc/bloc.dart';
 import 'package:news_app/data/repositories/news_repository.dart';
 
+import '../../data/databases/news_provider_sqflite.dart';
 import '../../data/models/news.dart';
-import '../../data/repositories/news_provider_sqflite.dart';
 import './home_screen_event.dart';
 import './home_screen_state.dart';
 

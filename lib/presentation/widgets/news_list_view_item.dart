@@ -5,7 +5,7 @@ import '../../data/models/news.dart';
 
 class NewsItem extends StatelessWidget {
   final News news;
-  const NewsItem(this.news);
+  const NewsItem(this.news, {super.key});
   @override
   Widget build(BuildContext context) {
     return InkWell(

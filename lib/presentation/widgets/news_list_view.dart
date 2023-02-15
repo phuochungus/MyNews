@@ -9,10 +9,11 @@ class NewsListView extends StatefulWidget {
   final List<News> newsGroup;
   final bool hasReachMax;
   final ScrollController _scrollController;
-  bool isError;
+  final bool isError;
 
-  NewsListView(this._scrollController, this.newsGroup, this.hasReachMax,
-      {super.key, this.isError = false});
+  const NewsListView(
+      this._scrollController, this.newsGroup, this.hasReachMax, this.isError,
+      {super.key});
 
   @override
   State<StatefulWidget> createState() => NewsListViewState();

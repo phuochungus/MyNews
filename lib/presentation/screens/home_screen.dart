@@ -3,17 +3,16 @@ import "package:flutter/services.dart";
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:news_app/business_login/blocs/home_screen_bloc.dart';
-import 'package:news_app/data/models/news.dart';
 import 'package:news_app/data/repositories/news_repository.dart';
 import 'package:news_app/presentation/widgets/news_list_view.dart';
 import '../../business_login/blocs/home_screen_event.dart';
 import '../../business_login/blocs/home_screen_state.dart';
-import '../../data/repositories/news_provider_sqflite.dart';
+import '../../data/databases/news_provider_sqflite.dart';
 
 class HomeScreen extends StatelessWidget {
-  List<News> newsGroup = List.empty();
-
   final _scrollController = ScrollController();
+
+  HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,7 @@ class HomeScreen extends StatelessWidget {
             HomeScreenBloc(RepositoryProvider.of<NewsRepository>(context))
               ..add(RetrieveNewsFromInternalDb()),
         child: Scaffold(
-          drawer: NavigationDrawer(),
+          drawer: const NavigationDrawer(),
           appBar: AppBar(
             centerTitle: true,
             flexibleSpace: Container(
@@ -77,7 +76,7 @@ class HomeScreen extends StatelessWidget {
                             _scrollController,
                             state.newsGroup,
                             state.hasReachMax,
-                            isError: false,
+                            false,
                           ),
                         );
                       case NewsStatus.failure:
@@ -87,7 +86,7 @@ class HomeScreen extends StatelessWidget {
                             _scrollController,
                             state.newsGroup,
                             state.hasReachMax,
-                            isError: true,
+                            true,
                           ),
                         );
                     }
@@ -104,7 +103,7 @@ class HomeScreen extends StatelessWidget {
 
 class CustomFAB extends StatelessWidget {
   final ScrollController _scrollController;
-  const CustomFAB(this._scrollController);
+  const CustomFAB(this._scrollController, {super.key});
 
   void _scrollUp() {
     _scrollController.animateTo(_scrollController.position.minScrollExtent,
@@ -142,6 +141,8 @@ class CustomFAB extends StatelessWidget {
 }
 
 class NavigationDrawer extends StatelessWidget {
+  const NavigationDrawer({super.key});
+
   @override
   Widget build(BuildContext context) {
     return const Drawer();

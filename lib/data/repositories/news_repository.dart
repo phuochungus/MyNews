@@ -18,6 +18,7 @@ class NewsRepository {
       }
       return newsGroup;
     } on DioError catch (e) {
+      print(e);
       throw Exception('call API failed');
     }
   }
